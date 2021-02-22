@@ -5,6 +5,7 @@ import ChatListItem from '../components/ChatListItem';
 
 import chatRooms from '../data/ChatRooms';
 import { FlatList } from 'react-native-gesture-handler';
+import NewMessageButton from '../components/NewMessageButton';
 
 export default function ChatsScreen() {
   return (
@@ -13,6 +14,7 @@ export default function ChatsScreen() {
         data={chatRooms} 
         renderItem={({item}) => <ChatListItem chatRoom={item} />}
         keyExtractor={(item) => item.id} />
+        <NewMessageButton />
     </View>
   );
 }
