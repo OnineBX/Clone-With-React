@@ -28,17 +28,18 @@ export type ChatRoomParamList ={
 export type User = {
   id: String;
   name: String;
-  imageUrl: String;
+  imageUri?: String;
 }
 
 export type Message = {
   id: String;
   content: string;
-  createdAt:number;
+  createdAt:string;
+  user: User;
 }
 
 export type ChatRoom = {
   id: String;
-  users: [User];
+  users: User[];
   lastMessage: Message;
 }
