@@ -1,0 +1,3 @@
+[submodule "Votsup"]
+	path = Votsup
+	url = git@github.com:Pwrecktice/Votsup.git
