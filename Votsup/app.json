@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Wotsup",
-    "slug": "Wotsup",
+    "name": "Votsup",
+    "slug": "Votsup",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,13 +19,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.oninebx.votsup"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.oninebx.votsup"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

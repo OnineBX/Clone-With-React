@@ -1,4 +1,5 @@
 export type RootStackParamList = {
+  Welcome: undefined;
   Root: undefined;
   ChatRoom: ChatRoomParamList;
   Contacts: undefined;
@@ -43,4 +44,11 @@ export type ChatRoom = {
   id: String;
   users: User[];
   lastMessage: Message;
+}
+
+export type UserData = {
+  user: {
+    id: string,
+    allowPolicy: boolean
+  }
 }

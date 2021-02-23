@@ -6,21 +6,24 @@ import { ColorSchemeName, View } from 'react-native';
 import {Octicons, MaterialCommunityIcons, MaterialIcons, FontAwesome5} from '@expo/vector-icons';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
-import { RootStackParamList } from '../types';
+import { RootStackParamList, UserData } from '../types';
 import MainTabNavigator from './MainTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
 import Colors from '../constants/Colors';
 import ChatRoomScreen from '../screens/ChatRoomScreen';
 import ContactsScreen from '../screens/ContactsScreen';
+import WelcomeScreen from '../screens/WelcomeScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Users from '../data/Users';
 
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
-export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
+export default function Navigation({ colorScheme, userData }: { colorScheme: ColorSchemeName; userData: UserData }) {
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <RootNavigator />
+      <RootNavigator cachedData={userData}/>
     </NavigationContainer>
   );
 }
@@ -33,7 +36,11 @@ type ChatRoomRoute ={
 
 }
 
-function RootNavigator() {
+function RootNavigator({cachedData} : {cachedData : UserData}) {
+  const {user} = cachedData;
+  
+  console.log("allowPolicy =" + user.allowPolicy);
+   
   return (
     <Stack.Navigator screenOptions={{ 
       headerStyle: {
@@ -46,8 +53,11 @@ function RootNavigator() {
       headerTitleStyle: {
         fontWeight: 'bold'
       }
-    }}>
-      <Stack.Screen name="Root" component={MainTabNavigator}
+    }}
+    initialRouteName={ user.allowPolicy ? "Root" : "Welcome"}
+    >
+    <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="Root" component={MainTabNavigator}
       options={{
         title: "Votsup",
         headerRight: () => (
@@ -77,6 +87,7 @@ function RootNavigator() {
         )
       })} />
       <Stack.Screen name="Contacts" component={ContactsScreen} options={{ title: 'Contacts' }} />
+      
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );
