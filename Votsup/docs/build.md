@@ -1,0 +1,1 @@
+turtle build:android --type apk --keystore-path ./oninebx.jks --keystore-alias "oninebx" --allow-non-https-public-url --public-url http://127.0.0.1:8000/android-index.json

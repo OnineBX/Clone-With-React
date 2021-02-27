@@ -1,25 +1,63 @@
-import { Ionicons } from '@expo/vector-icons';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import * as React from 'react';
+import { Ionicons, Fontisto, Octicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  createMaterialTopTabNavigator,
+  MaterialTopTabBarProps,
+} from "@react-navigation/material-top-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import * as React from "react";
 
-import {Fontisto} from '@expo/vector-icons';
+import Colors from "../constants/Colors";
+import useColorScheme from "../hooks/useColorScheme";
+import ChatsScreen from "../screens/ChatsScreen";
+import CameraScreen from "../screens/CameraScreen";
+import { MainTabParamList, TabOneParamList, ChatsParamList } from "../types";
+import { View, Text, StyleSheet, PixelRatio } from "react-native";
+import { sp2px, screenWidth } from "../utils/screenUtil";
+import {
+  GestureHandlerGestureEventNativeEvent,
+  PanGestureHandler,
+  PanGestureHandlerEventExtra, 
+  PanGestureHandlerGestureEvent,
+  PanGestureHandlerStateChangeEvent,
+  State,
+} from "react-native-gesture-handler";
+import Animated, { block, event } from "react-native-reanimated";
+import { xyz } from "color";
+import { transform } from "@babel/core";
+import ContactsScreen from "../screens/ContactsScreen";
 
-import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import ChatsScreen from '../screens/ChatsScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
-import { MainTabParamList, TabOneParamList, ChatsParamList } from '../types';
+import RXTabBar from "../components/RXNavigation/RXTabBar";
+import {Props as RXTabBarProps} from '../components/RXNavigation/RXTabBar'
+import { Route } from "react-native-tab-view";
+import RXTopTabBar from "../components/RXNavigation/RXTopTabBar";
+import RXPager from "../components/RXNavigation/RXPager";
 
+// const MainTab = createRXTopTabNavigator<MainTabParamList>();
 const MainTab = createMaterialTopTabNavigator<MainTabParamList>();
 
-export default function BottomTabNavigator() {
+export default function TopTabNavigator() {
   const colorScheme = useColorScheme();
 
   return (
     <MainTab.Navigator
       initialRouteName="Chats"
-      tabBarOptions={{ 
+      style={{
+        backgroundColor: 'white'
+      }}
+      // headerOptions={{
+      //   title: "Votsup",
+      //   headerRight: () => (
+      //     <View style={{
+      //       flexDirection: 'row', 
+      //       width: 60, 
+      //       justifyContent: 'space-between', marginRight:10
+      //       }}>
+      //       <Octicons name="search" size={22} color='white'/>
+      //       <MaterialCommunityIcons name="dots-vertical" size={22} color='white' />
+      //     </View>
+      //   )
+      // }}
+      tabBarOptions={{
         activeTintColor: Colors[colorScheme].background,
         style: {
           backgroundColor: Colors[colorScheme].tint,
@@ -29,29 +67,48 @@ export default function BottomTabNavigator() {
           height: 3,
         },
         labelStyle: {
-          fontWeight: 'bold'
+          fontWeight: "bold",
+        },
+        tabStyle: {
+          width: "auto",
+          margin:0,
         },
         showIcon: true,
-      }}>
+      }}
+      tabBar={props => <RXTopTabBar {...props} />}
+      pager={props => <RXPager {...props} />}
+      
+    >
       <MainTab.Screen
         name="Camera"
-        component={TabOneNavigator}
+        component={CameraScreen}
         options={{
-          tabBarIcon: ({ color }) => <Fontisto name="camera" color={color} size={18} />,
-          tabBarLabel: () => null
+          tabBarIcon: ({ color }) => (
+            <Fontisto name="camera" color={color} size={18} />
+          ),
+          tabBarLabel: () => null,
         }}
       />
       <MainTab.Screen
         name="Chats"
         component={ChatsNavigator}
+        options={{
+          tabBarLabel: () => <Text style={styles.tabText}>Chats</Text>,
+        }}
       />
       <MainTab.Screen
         name="Status"
-        component={TabOneNavigator}
+        component={ContactsScreen}
+        options={{ 
+          tabBarLabel: () => <Text style={styles.tabText}>Status</Text>,
+        }}
       />
       <MainTab.Screen
         name="Calls"
         component={TabOneNavigator}
+        options={{
+          tabBarLabel: () => <Text style={styles.tabText}>Calls</Text>,
+        }}
       />
     </MainTab.Navigator>
   );
@@ -59,7 +116,10 @@ export default function BottomTabNavigator() {
 
 // You can explore the built-in icon families and icons on the web at:
 // https://icons.expo.fyi/
-function TabBarIcon(props: { name: React.ComponentProps<typeof Ionicons>['name']; color: string }) {
+function TabBarIcon(props: {
+  name: React.ComponentProps<typeof Ionicons>["name"];
+  color: string;
+}) {
   return <Ionicons size={30} style={{ marginBottom: -3 }} {...props} />;
 }
 
@@ -67,13 +127,15 @@ function TabBarIcon(props: { name: React.ComponentProps<typeof Ionicons>['name']
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
 const TabOneStack = createStackNavigator<TabOneParamList>();
 
+let f = (a: number & {}) => a;
+
 function TabOneNavigator() {
   return (
     <TabOneStack.Navigator>
       <TabOneStack.Screen
         name="TabOneScreen"
         component={ChatsScreen}
-        options={{ headerTitle: 'Tab One Title' }}
+        options={{ headerTitle: "Tab One Title" }}
       />
     </TabOneStack.Navigator>
   );
@@ -92,3 +154,11 @@ function ChatsNavigator() {
     </TabTwoStack.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  tabText: {
+    color: "white",
+    textAlign: "center",
+    width: (screenWidth() - 80 - 30) / 3,
+  }
+});

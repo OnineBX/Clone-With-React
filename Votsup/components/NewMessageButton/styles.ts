@@ -3,12 +3,15 @@ import Colors from '../../constants/Colors';
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
+        width: 50,
+        height: 50,
         position: 'absolute',
         bottom: 20,
         right: 20,
         backgroundColor: Colors.light.tint,
-        borderRadius: 40
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
 

@@ -38,11 +38,10 @@ type ChatRoomRoute ={
 
 function RootNavigator({cachedData} : {cachedData : UserData}) {
   const {user} = cachedData;
-  
-  console.log("allowPolicy =" + user.allowPolicy);
    
   return (
-    <Stack.Navigator screenOptions={{ 
+    <Stack.Navigator
+     screenOptions={{ 
       headerStyle: {
         backgroundColor: Colors.light.tint,
         shadowOpacity: 0,
@@ -59,21 +58,12 @@ function RootNavigator({cachedData} : {cachedData : UserData}) {
     <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Root" component={MainTabNavigator}
       options={{
-        title: "Votsup",
-        headerRight: () => (
-          <View style={{
-            flexDirection: 'row', 
-            width: 60, 
-            justifyContent: 'space-between', marginRight:10
-            }}>
-            <Octicons name="search" size={22} color='white'/>
-            <MaterialCommunityIcons name="dots-vertical" size={22} color='white' />
-          </View>
-        )
+        headerShown: false,
       }} />
       <Stack.Screen name="ChatRoom" component={ChatRoomScreen} options={
         ({route}) => ({
         title: route.params.name,
+        headerShown: true,
         headerRight: () => (
           <View style={{
             flexDirection: 'row', 
