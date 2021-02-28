@@ -26,14 +26,12 @@ import { xyz } from "color";
 import { transform } from "@babel/core";
 import ContactsScreen from "../screens/ContactsScreen";
 
-import RXTabBar from "../components/RXNavigation/RXTabBar";
-import {Props as RXTabBarProps} from '../components/RXNavigation/RXTabBar'
-import { Route } from "react-native-tab-view";
 import RXTopTabBar from "../components/RXNavigation/RXTopTabBar";
 import RXPager from "../components/RXNavigation/RXPager";
+import createRXTopTabNavigator from "../components/RXNavigation/createRXTopTabNavigator";
 
 // const MainTab = createRXTopTabNavigator<MainTabParamList>();
-const MainTab = createMaterialTopTabNavigator<MainTabParamList>();
+const MainTab = createRXTopTabNavigator<MainTabParamList>();
 
 export default function TopTabNavigator() {
   const colorScheme = useColorScheme();
@@ -44,19 +42,6 @@ export default function TopTabNavigator() {
       style={{
         backgroundColor: 'white'
       }}
-      // headerOptions={{
-      //   title: "Votsup",
-      //   headerRight: () => (
-      //     <View style={{
-      //       flexDirection: 'row', 
-      //       width: 60, 
-      //       justifyContent: 'space-between', marginRight:10
-      //       }}>
-      //       <Octicons name="search" size={22} color='white'/>
-      //       <MaterialCommunityIcons name="dots-vertical" size={22} color='white' />
-      //     </View>
-      //   )
-      // }}
       tabBarOptions={{
         activeTintColor: Colors[colorScheme].background,
         style: {
@@ -73,9 +58,26 @@ export default function TopTabNavigator() {
           width: "auto",
           margin:0,
         },
+        headerOptions:{
+          headerShown: true,
+          title: "Votsup"
+        },
+        // header: {
+          // title: "Votsup",
+          // headerRight: () => (
+          //   <View style={{
+          //     flexDirection: 'row', 
+          //     width: 60, 
+          //     justifyContent: 'space-between', marginRight:10
+          //     }}>
+          //     <Octicons name="search" size={22} color='white'/>
+          //     <MaterialCommunityIcons name="dots-vertical" size={22} color='white' />
+          //   </View>
+          // )
+        // },
         showIcon: true,
+        
       }}
-      tabBar={props => <RXTopTabBar {...props} />}
       pager={props => <RXPager {...props} />}
       
     >

@@ -58,6 +58,7 @@ function RootNavigator({cachedData} : {cachedData : UserData}) {
     <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Root" component={MainTabNavigator}
       options={{
+        title:"Votsup",
         headerShown: false,
       }} />
       <Stack.Screen name="ChatRoom" component={ChatRoomScreen} options={

@@ -23,7 +23,11 @@ import {
 } from 'react-native-tab-view/src/types';
 
 import { View as BaseView, Text } from 'react-native'
-import RXHeader from './RXHeader';
+import RXHeader from './RXHeader/RXHeader';
+import { RXTabBarHeaderProps, RXTopTabBarHeaderOptions } from './types';
+import RXHeaderContainer from './RXHeader/RXHeaderContainer';
+import {Props as HeaderContainerProps} from './RXHeader/RXHeaderContainer'
+import { EdgeInsets } from 'react-native-safe-area-context';
 
 export type Props<T extends Route> = SceneRendererProps & {
   navigationState: NavigationState<T>;
@@ -37,7 +41,10 @@ export type Props<T extends Route> = SceneRendererProps & {
   getAccessible: (scene: Scene<T>) => boolean | undefined;
   getAccessibilityLabel: (scene: Scene<T>) => string | undefined;
   getTestID: (scene: Scene<T>) => string | undefined;
-   
+  // Ryan: add options for rendering header
+  headerOptions?: RXTopTabBarHeaderOptions;
+  insets: EdgeInsets
+
   renderLabel?: (
     scene: Scene<T> & {
       focused: boolean;
@@ -63,6 +70,7 @@ export type Props<T extends Route> = SceneRendererProps & {
   labelStyle?: StyleProp<TextStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
+  renderHeader: (props: HeaderContainerProps) => React.ReactNode;
 };
 
 type State = {
@@ -93,7 +101,8 @@ export default class TabBar<T extends Route> extends React.Component<Props<T>, S
     getTestID: ({ route }: Scene<Route>) => route.testID,
     renderIndicator: (props: IndicatorProps<Route>) => (
       <TabBarIndicator {...props} />
-    )
+    ),
+    renderHeader: (props: HeaderContainerProps) => (<RXHeaderContainer {...props} />)
   };
 
   state: State = {
@@ -366,6 +375,8 @@ export default class TabBar<T extends Route> extends React.Component<Props<T>, S
       contentContainerStyle,
       style,
       indicatorContainerStyle,
+      headerOptions,
+      insets
     } = this.props;
     const { layout, tabWidths } = this.state;
     const { routes } = navigationState;
@@ -379,6 +390,9 @@ export default class TabBar<T extends Route> extends React.Component<Props<T>, S
     );
     
     const translateY = this.getTranslateY(position, layout.height);
+    
+    const {headerShown, ...rest} = headerOptions ? headerOptions : {headerShown: false};
+    console.log('headerShown' + headerShown)
     return (
       <Animated.View
         onLayout={this.handleLayout}
@@ -392,7 +406,10 @@ export default class TabBar<T extends Route> extends React.Component<Props<T>, S
           }
         ]}
       >
-        <RXHeader />
+        {
+          headerShown ? this.props.renderHeader({layout, ...rest} as HeaderContainerProps) : null
+        } 
+        
         <Animated.View
           pointerEvents="none"
           style={[

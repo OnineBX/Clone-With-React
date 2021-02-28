@@ -1,10 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { RXTabBarHeaderProps } from '../types';
 
-const RXHeader = () => {
+
+
+const RXHeader = (props: RXTabBarHeaderProps) => {
+    console.log(props.title)
     return (
         <View style={styles.container}>
-            <Text>Header</Text>
+            <Text>{props.title}</Text>
         </View>
     )
 };
@@ -12,7 +16,8 @@ const RXHeader = () => {
 const styles = StyleSheet.create({
     container: {
         width:'100%',
-        minHeight: 48
+        minHeight: 48,
+        justifyContent:'center'
     }
 })
 
