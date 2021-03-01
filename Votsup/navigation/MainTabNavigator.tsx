@@ -60,21 +60,19 @@ export default function TopTabNavigator() {
         },
         headerOptions:{
           headerShown: true,
-          title: "Votsup"
+          title: "Votsup",
+          tintColor: Colors.light.background,
+          headerRight: () => (
+          <View style={{
+            flexDirection: 'row', 
+            width: 60, 
+            justifyContent: 'space-between', marginRight:10
+            }}>
+            <Octicons name="search" size={22} color='white'/>
+            <MaterialCommunityIcons name="dots-vertical" size={22} color='white' />
+          </View>
+          )
         },
-        // header: {
-          // title: "Votsup",
-          // headerRight: () => (
-          //   <View style={{
-          //     flexDirection: 'row', 
-          //     width: 60, 
-          //     justifyContent: 'space-between', marginRight:10
-          //     }}>
-          //     <Octicons name="search" size={22} color='white'/>
-          //     <MaterialCommunityIcons name="dots-vertical" size={22} color='white' />
-          //   </View>
-          // )
-        // },
         showIcon: true,
         
       }}

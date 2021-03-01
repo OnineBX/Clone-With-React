@@ -5,9 +5,11 @@ import { EdgeInsets } from 'react-native-safe-area-context';
 import { RXTabBarHeaderProps } from '../types';
 import RXHeader from './RXHeader';
 
+import HeaderShownContext from '@react-navigation/stack/src/utils/HeaderShownContext';
+
 export type Props = RXTabBarHeaderProps & {
   layout: Layout;
-  // insets: EdgeInsets;
+  insets: EdgeInsets;
   headerConfig: RXTabBarHeaderProps;
   style?: StyleProp<ViewStyle>;
 };
@@ -37,22 +39,27 @@ const getDefaultHeaderHeight = (
 
 export default function HeaderContainer({
   style,
-  // insets,
+  insets,
+  layout,
   ...rest
 }: Props) {
 
+const isParentHeaderShown = React.useContext(HeaderShownContext);
+const defaultHeight = getDefaultHeaderHeight(layout,isParentHeaderShown ? 0 : insets.top);
+const containerStyle: ViewStyle = {
+  height: defaultHeight,
+}
   return (
-    <Animated.View pointerEvents="box-none" style={style}>
-      <RXHeader {...rest} />
+    <Animated.View pointerEvents="box-none" style={[styles.container, containerStyle]}>
+      <RXHeader { ...rest} insets={insets} />
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+  container:{
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+
 });

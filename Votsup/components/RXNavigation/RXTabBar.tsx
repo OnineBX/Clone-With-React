@@ -376,7 +376,7 @@ export default class TabBar<T extends Route> extends React.Component<Props<T>, S
       style,
       indicatorContainerStyle,
       headerOptions,
-      insets
+      insets,
     } = this.props;
     const { layout, tabWidths } = this.state;
     const { routes } = navigationState;
@@ -407,7 +407,7 @@ export default class TabBar<T extends Route> extends React.Component<Props<T>, S
         ]}
       >
         {
-          headerShown ? this.props.renderHeader({layout, ...rest} as HeaderContainerProps) : null
+          headerShown ? this.props.renderHeader({layout, insets, ...rest} as HeaderContainerProps) : null
         } 
         
         <Animated.View

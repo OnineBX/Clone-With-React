@@ -13,8 +13,8 @@ export type RXTopTabBarProps = RXTopTabBarOptions & SceneRendererProps & {
 // Options for tabbar inner header
 export type RXTopTabBarHeaderOptions = {
     headerShown?: boolean;
-    title?: string
-}
+
+} & RXTabBarHeaderProps;
 
 // New tabBarOptions prop of MaterialTopTabNavigator
 export type RXTopTabBarOptions = MaterialTopTabBarOptions & {
@@ -56,7 +56,10 @@ export type RXTopTabNavigationConfig = Partial<Omit<React.ComponentProps<typeof 
 
 // New props for RXTabBar Header
 export type RXTabBarHeaderProps = {
-    title?: string
+    title?: string;
+    titleAlign?: string;
+    tintColor?: string;
+    headerRight?: (props: { tintColor?: string }) => React.ReactNode;
 }
 
 
