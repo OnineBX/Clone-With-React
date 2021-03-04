@@ -38,7 +38,9 @@ export default function TopTabNavigator() {
 
   return (
     <MainTab.Navigator
+      // lazy={true}
       initialRouteName="Chats"
+      
       style={{
         backgroundColor: 'white'
       }}
@@ -76,8 +78,6 @@ export default function TopTabNavigator() {
         showIcon: true,
         
       }}
-      pager={props => <RXPager {...props} />}
-      
     >
       <MainTab.Screen
         name="Camera"

@@ -12,6 +12,7 @@ import Animated, {
   Easing as OldEasing,
   // @ts-ignore
   EasingNode,
+  greaterOrEq,
 } from 'react-native-reanimated';
 import memoize from 'react-native-tab-view/src/memoize';
 
@@ -21,8 +22,9 @@ import {
   Route,
   Listener,
   PagerCommonProps,
-  EventEmitterProps,
 } from 'react-native-tab-view/src/types';
+
+import {RXEventEmitterProps} from './types';
 
 type Binary = 0 | 1;
 
@@ -36,7 +38,7 @@ export type Props<T extends Route> = PagerCommonProps & {
   // Don't enable this on iOS where this is buggy and views don't re-appear
   removeClippedSubviews?: boolean;
   children: (
-    props: EventEmitterProps & {
+    props: RXEventEmitterProps & {
       // Animated value which represents the state of current index
       // It can include fractional digits as it represents the intermediate value
       position: Animated.Node<number>;
@@ -295,6 +297,7 @@ export default class Pager<T extends Route> extends React.Component<
 
   // Scene that was last entered
   private lastEnteredIndex = new Value(this.props.navigationState.index);
+  private lastLeftIndex = new Value(this.props.navigationState.index);
 
   // Whether the user is currently dragging the screen
   private isSwiping: Animated.Value<Binary> = new Value(FALSE);
@@ -401,6 +404,9 @@ export default class Pager<T extends Route> extends React.Component<
   // Listeners for the entered screen
   private enterListeners: Listener[] = [];
 
+  // Listeners for the leave screen
+  private leaveListeners: Listener[] = [];
+
   // InteractionHandle to handle tasks around animations
   private interactionHandle: number | null = null;
 
@@ -433,15 +439,18 @@ export default class Pager<T extends Route> extends React.Component<
     }
   };
 
-  private addListener = (type: 'enter', listener: Listener) => {
+  // Ryan: support leave event
+  private addListener = (type: 'enter' | 'leave', listener: Listener) => {
     switch (type) {
       case 'enter':
         this.enterListeners.push(listener);
         break;
+      case 'leave':
+        this.leaveListeners.push(listener);
     }
   };
-
-  private removeListener = (type: 'enter', listener: Listener) => {
+  // Ryan: support leave event
+  private removeListener = (type: 'enter' | 'leave', listener: Listener) => {
     switch (type) {
       case 'enter': {
         const index = this.enterListeners.indexOf(listener);
@@ -452,16 +461,34 @@ export default class Pager<T extends Route> extends React.Component<
 
         break;
       }
+      case 'leave': {
+        const index = this.leaveListeners.indexOf(listener);
+
+        if (index > -1) {
+          this.leaveListeners.splice(index, 1);
+        }
+
+        break;
+      }
     }
   };
 
+  
   private handleEnteredIndexChange = ([value]: readonly number[]) => {
     const index = Math.max(
       0,
       Math.min(value, this.props.navigationState.routes.length - 1)
     );
-
     this.enterListeners.forEach((listener) => listener(index));
+  };
+
+  // Ryan: Leave event
+  private handleLeftIndexChange = ([value]: readonly number[]) => {
+    const index = Math.max(
+      0,
+      Math.min(value, this.props.navigationState.routes.length - 1)
+    );
+    this.leaveListeners.forEach((listener) => listener(index));
   };
 
   private transitionTo = (index: Animated.Node<number>) => {
@@ -603,13 +630,37 @@ export default class Pager<T extends Route> extends React.Component<
           : greaterThan(this.gestureX, 0),
         // Based on the direction of the gesture, determine if we're entering the previous or next screen
         cond(neq(floor(this.position), this.lastEnteredIndex), [
+          cond(neq(this.lastEnteredIndex, this.lastLeftIndex), [
+            call([this.lastEnteredIndex], this.handleLeftIndexChange)
+          ]),
           set(this.lastEnteredIndex, floor(this.position)),
+          
           call([floor(this.position)], this.handleEnteredIndexChange),
+        ],[
+          cond(neq(ceil(sub(this.position, add(this.lastEnteredIndex, 0.1))), 1),[
+            cond(neq(floor(this.position), this.lastLeftIndex),[
+              set(this.lastLeftIndex,floor(this.position)),
+              call([ceil(this.position)], this.handleLeftIndexChange)
+            ],)
+          ],[
+            
+          ])
         ]),
         cond(neq(ceil(this.position), this.lastEnteredIndex), [
+          cond(neq(this.lastEnteredIndex, this.lastLeftIndex), [
+            call([this.lastEnteredIndex], this.handleLeftIndexChange)
+          ]),
           set(this.lastEnteredIndex, ceil(this.position)),
           call([ceil(this.position)], this.handleEnteredIndexChange),
-        ])
+        ],[
+          cond(neq(ceil(sub(sub(this.lastEnteredIndex, 0.1), this.position)), 1),[
+            cond(neq(ceil(this.position), this.lastLeftIndex),[
+              set(this.lastLeftIndex, ceil(this.position)),
+              call([floor(this.position)], this.handleLeftIndexChange)
+            ])
+            
+          ])
+        ]),
       )
     ),
     onChange(
@@ -618,7 +669,12 @@ export default class Pager<T extends Route> extends React.Component<
       // Without `onChange`, this will fire even if the value didn't change
       // We don't want to call the listeners if the value didn't change
       [
-        cond(not(this.isSwiping), set(this.gesturesEnabled, 1)),
+        cond(not(this.isSwiping), [
+          set(this.gesturesEnabled, 1),
+          cond(neq(this.lastEnteredIndex, this.lastLeftIndex),[
+            call([this.lastEnteredIndex], this.handleLeftIndexChange)
+          ])
+        ]),
         call(
           [this.isSwiping, this.indexAtSwipeEnd, this.index],
           ([isSwiping, indexAtSwipeEnd, currentIndex]: readonly number[]) => {
@@ -652,7 +708,7 @@ export default class Pager<T extends Route> extends React.Component<
               }
             } else {
               onSwipeEnd?.();
-
+              
               if (this.interactionHandle !== null) {
                 InteractionManager.clearInteractionHandle(
                   this.interactionHandle

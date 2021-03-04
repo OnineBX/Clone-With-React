@@ -1,7 +1,9 @@
 import type { MaterialTopTabBarOptions } from "@react-navigation/material-top-tabs";
 import { MaterialTopTabDescriptorMap, MaterialTopTabNavigationConfig, MaterialTopTabNavigationEventMap } from "@react-navigation/material-top-tabs/lib/typescript/src/types";
-import { NavigationHelpers, ParamListBase, Route, TabNavigationState } from "@react-navigation/native";
-import { SceneRendererProps, TabView } from "react-native-tab-view";
+import { DefaultNavigatorOptions, EventMapBase, NavigationHelpers, NavigationState, ParamListBase, Route, RouteConfig, TabNavigationState } from "@react-navigation/native";
+import { SceneRendererProps } from "react-native-tab-view";
+import { Listener } from "react-native-tab-view/lib/typescript/src/types";
+import TabView from './RXTabView';
 
 // New Props type for RXTopTabBar component
 export type RXTopTabBarProps = RXTopTabBarOptions & SceneRendererProps & {
@@ -62,6 +64,42 @@ export type RXTabBarHeaderProps = {
     headerRight?: (props: { tintColor?: string }) => React.ReactNode;
 }
 
+// new props for EventEmitter
+export type RXEventEmitterProps = {
+    addListener: (type: 'enter' | 'leave', listener: Listener) => void;
+    removeListener: (type: 'enter' | 'leave', listener: Listener) => void;
+  };
+
+  // New props for Screen
+export type RXRouteConfig<ParamList extends ParamListBase, RouteName extends keyof ParamList, State extends NavigationState, ScreenOptions extends {}, EventMap extends EventMapBase> = RouteConfig<ParamList , RouteName, State, ScreenOptions, EventMap> & {
+    sticky?: boolean
+}
+
+// New props for Navigator
+export type RXTypedNavigator<
+  ParamList extends ParamListBase,
+  State extends NavigationState,
+  ScreenOptions extends {},
+  EventMap extends EventMapBase,
+  Navigator extends React.ComponentType<any>
+> = {
+  /**
+   * Navigator component which manages the child screens.
+   */
+  Navigator: React.ComponentType<
+    Omit<
+      React.ComponentProps<Navigator>,
+      keyof DefaultNavigatorOptions<any, any>
+    > &
+      DefaultNavigatorOptions<ScreenOptions, ParamList>
+  >;
+  /**
+   * Component used for specifying route configuration.
+   */
+  Screen: <RouteName extends keyof ParamList>(
+    _: RXRouteConfig<ParamList, RouteName, State, ScreenOptions, EventMap>
+  ) => null;
+};
 
 
 

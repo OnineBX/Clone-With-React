@@ -1,12 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import {Camera} from 'expo-camera';
 
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {screenHeight} from '../utils/screenUtil';
 import { SceneRendererProps } from 'react-native-tab-view';
 
-const CameraScreen = (props) => {
+const CameraScreen = () => {
+    
+    const isFocus = useIsFocused();
     const [hasPermission, setHasPermission] = useState(false);
     const [type, setType] = useState(Camera.Constants.Type.back);
     useEffect(() => {
@@ -15,38 +17,33 @@ const CameraScreen = (props) => {
             setHasPermission(status === 'granted');
         })();
     }, []);
+    const cameraView = (<View style={styles.container} >
+      <Camera style={styles.camera} type={type}>
+        <View style={styles.buttonContainer}>
+          <Pressable
+            style={styles.button}
+            onPress={() => {
+              setType(
+                type === Camera.Constants.Type.back
+                  ? Camera.Constants.Type.front
+                  : Camera.Constants.Type.back
+              );
+            }}>
+            <Text style={styles.text}> Flip </Text>
+          </Pressable>
+        </View>
+      </Camera>
+    </View>);
+    const renderCamera = async ()=> {
+      return cameraView;
+    }
+    const emptyView = (<View style={{width:'100%', height:'100%', backgroundColor:'black'}}><Text>No Permission</Text></View>);
+    const renderEmpty = async ()=> {
+      return emptyView;
+    }
 
-    const navigation = useNavigation();
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('state', () => {
-          
-        });
+    return hasPermission ? cameraView : emptyView;
     
-        return unsubscribe;
-      }, [navigation]);
-
-      
-
-    return (hasPermission ? 
-        (<View style={styles.container}>
-            <Camera style={styles.camera} type={type}>
-              <View style={styles.buttonContainer}>
-                <Pressable
-                  style={styles.button}
-                  onPress={() => {
-                    setType(
-                      type === Camera.Constants.Type.back
-                        ? Camera.Constants.Type.front
-                        : Camera.Constants.Type.back
-                    );
-                  }}>
-                  <Text style={styles.text}> Flip </Text>
-                </Pressable>
-              </View>
-            </Camera>
-          </View>) :
-        (<View><Text>No Permission</Text></View>)
-    )
 };
 
 export default CameraScreen;

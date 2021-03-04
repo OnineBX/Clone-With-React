@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TabView, SceneRendererProps } from "react-native-tab-view";
+import { SceneRendererProps } from "react-native-tab-view";
 import {
   NavigationHelpersContext,
   TabNavigationState,
@@ -8,7 +8,8 @@ import {
   useTheme,
 } from "@react-navigation/native";
 
-import RXTopTabBar from "./RXTopTabBar";
+import TopTabBar from "./RXTopTabBar";
+import TabView from './RXTabView';
 
 import type {
   MaterialTopTabDescriptorMap,
@@ -17,8 +18,6 @@ import type {
   MaterialTopTabBarProps,
 } from "@react-navigation/material-top-tabs/lib/typescript/src/types";
 import { RXTopTabBarProps, RXTopTabNavigationConfig } from "./types";
-import { EdgeInsets, SafeAreaInsetsContext } from "react-native-safe-area-context";
-import SafeAreaProviderCompat from "./SafeAreaProviderCompat";
 
 type Props = RXTopTabNavigationConfig & {
   state: TabNavigationState<ParamListBase>;
@@ -30,7 +29,7 @@ type Props = RXTopTabNavigationConfig & {
 export default function RXTopTabView({
   pager,
   lazyPlaceholder,
-  tabBar = (props: RXTopTabBarProps) => <RXTopTabBar {...props} />,
+  tabBar = (props: RXTopTabBarProps) => <TopTabBar {...props} />,
   tabBarOptions,
   state,
   navigation,

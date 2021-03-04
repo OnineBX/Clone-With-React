@@ -392,7 +392,7 @@ export default class TabBar<T extends Route> extends React.Component<Props<T>, S
     const translateY = this.getTranslateY(position, layout.height);
     
     const {headerShown, ...rest} = headerOptions ? headerOptions : {headerShown: false};
-    console.log('headerShown' + headerShown)
+
     return (
       <Animated.View
         onLayout={this.handleLayout}

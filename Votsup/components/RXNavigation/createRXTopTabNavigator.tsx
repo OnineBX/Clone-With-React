@@ -9,7 +9,7 @@ import {
   TabActionHelpers,
   ParamListBase,
 } from '@react-navigation/native';
-import RXTopTabView from './RXTopTabView';
+import TopTabView from './RXTopTabView';
 import type {
   MaterialTopTabNavigationOptions,
   MaterialTopTabNavigationEventMap,
@@ -20,7 +20,7 @@ type Props = DefaultNavigatorOptions<MaterialTopTabNavigationOptions> &
   TabRouterOptions &
   RXTopTabNavigationConfig;
 
-function RXTopTabNavigator({
+function MaterialTopTabNavigator({
   initialRouteName,
   backBehavior,
   children,
@@ -41,7 +41,7 @@ function RXTopTabNavigator({
   });
 
   return (
-    <RXTopTabView
+    <TopTabView
       {...rest}
       state={state}
       navigation={navigation}
@@ -54,5 +54,5 @@ export default createNavigatorFactory<
   TabNavigationState<ParamListBase>,
   MaterialTopTabNavigationOptions,
   MaterialTopTabNavigationEventMap,
-  typeof RXTopTabNavigator
->(RXTopTabNavigator);
+  typeof MaterialTopTabNavigator
+>(MaterialTopTabNavigator);
