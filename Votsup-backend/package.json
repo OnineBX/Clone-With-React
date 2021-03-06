@@ -1,0 +1,22 @@
+{
+  "name": "votsup-backend",
+  "version": "0.0.1",
+  "description": "votsup apis",
+  "main": "server.js",
+  "scripts": {
+    "build": "rm -rf build/ && prettier --write src/ && tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js"
+  },
+  "author": "Ryan Xu",
+  "license": "ISC",
+  "dependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.11",
+    "@types/mongoose": "^5.10.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.11.18",
+    "pusher": "^5.0.0"
+  }
+}
